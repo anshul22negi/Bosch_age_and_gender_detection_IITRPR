@@ -8,19 +8,19 @@ from torch.utils.data import DataLoader, Dataset
 import os
 import random
 
-path = os.join(os.getcwd(),'dataset','mpii_human_pose_v1', 'images' )
+path = os.path.join(os.getcwd(),'dataset','mpii_human_pose_v1', 'images' )
 files = sorted([join(path, f) for f in listdir(path) if isfile(join(path, f))])
 
 random.seed(69)
-random.shufle(files)
+random.shuffle(files)
 
 split_ratio = 0.7
-train_size = split_ratio*len(files)
+train_size = int(split_ratio*len(files))
 test_size = len(files) - train_size
 
 transform = transforms.ToTensor()
 
-train_imgs, test_imgs = torch.zeros([train_size, 3, 256, 256]), torch.zeros([test_size, 3, 256, 256])
+train_imgs, test_imgs = torch.zeros(train_size, 3, 256, 256), torch.zeros(test_size, 3, 256, 256)
 
 for i, f in enumerate(files):
     img = Image.open(f).resize((256,256))

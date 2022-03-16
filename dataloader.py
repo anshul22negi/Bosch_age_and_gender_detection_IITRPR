@@ -10,6 +10,8 @@ import random
 
 path = os.join(os.getcwd(),'dataset','mpii_human_pose_v1', 'images' )
 files = sorted([join(path, f) for f in listdir(path) if isfile(join(path, f))])
+
+random.seed(69)
 random.shufle(files)
 
 split_ratio = 0.7
@@ -45,10 +47,10 @@ class MPI(Dataset):
 
 device = 'cpu'
 
-trainset = MPI(train_imgs)
+trainset = MPI(train_imgs, device)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=False)          
 
-valset = MPI(test_imgs)
+valset = MPI(test_imgs, device)
 valloader = torch.utils.data.DataLoader(valset, batch_size=32, shuffle=False)
     
 

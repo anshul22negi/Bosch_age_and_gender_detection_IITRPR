@@ -30,6 +30,7 @@ trainfiles = files[:train_len]
 valfiles = files[train_len:]
 
 bins = [[0] + sorted(random.sample(range(117), NBINS - 1)) for _ in range(NSETS)]
+device = "cpu"
 
 
 class get_data(Dataset):
@@ -42,21 +43,22 @@ class get_data(Dataset):
                 for k in range(NBINS):
                     if self.ages[i] >= bins[j][k]:
                         vals[j] = k
-            self.ages[i] = vals
+            self.ages[i] = vals.to(device)
 
         self.genders = [
-            F.one_hot(torch.tensor(int(x.split("_")[1])), num_classes=2) for x in f
+            F.one_hot(torch.tensor(int(x.split("_")[1])), num_classes=2).to(device)
+            for x in f
         ]
+        self.transform = transforms.ToTensor()
 
     def __len__(self):
         return len(self.f)
 
     def __getitem__(self, i):
         img = Image.open(self.files[i])
-        
-        return im, age, gender
+
+        return self.transform(img).to(device), self.ages[i], self.genders[i]
 
 
-train, test = train_test_split(df, test_size=0.3, random_state=69)
-train_loader = DataLoader(get_data(train), batch_size=BATCH_SIZE, shuffle=True)
-test_loader = DataLoader(get_data(test), batch_size=BATCH_SIZE, shuffle=False)
+train_loader = DataLoader(get_data(trainfiles), batch_size=BATCH_SIZE, shuffle=True)
+test_loader = DataLoader(get_data(valfiles), batch_size=BATCH_SIZE, shuffle=False)

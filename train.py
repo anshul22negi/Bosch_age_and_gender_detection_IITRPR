@@ -4,6 +4,7 @@ from dataloader import trainloader, valloader
 from swin_ir import SwinIR
 from utils.psnr import calculate_psnr
 from time import time
+import numpy as np
 
 input_height, input_width = 128, 128  # Actual dimensions of image from DataLoader
 upscale = 2
@@ -20,7 +21,7 @@ model = SwinIR(
     patch_size=(height, width),
     window_size=window_size,
     img_range=1.0,
-    depths=[3, 3,3],
+    depths=[3,3,3],
     embed_dim=60,
     num_heads=[3,3,3],
     mlp_ratio=2,
@@ -29,7 +30,9 @@ model = SwinIR(
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
-epochs = 10
+epochs = 1000
+
+bvloss = np.inf
 
 for i in range(epochs):
 
@@ -45,7 +48,7 @@ for i in range(epochs):
         optimizer.step()
 
         train_loss = single_loss.item()
-        print(stt - time())
+        print(time() - stt)
 
     with torch.no_grad():
         for seq in valloader:
@@ -55,6 +58,9 @@ for i in range(epochs):
 
             val_loss = single_loss.item()
 
+    if val_loss < bvloss:
+        torch.save(model, 'models/model.pt')
+        bvloss = val_loss
     print(
         f"epoch: {i:3} training loss: {train_loss:10.8f} ,  validation loss: {val_loss:10.8f} "
     )

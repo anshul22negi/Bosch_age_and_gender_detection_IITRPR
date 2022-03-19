@@ -47,4 +47,4 @@ def calculate_psnr(img1, img2, input_order='HWC'):
     mse = torch.mean((img1 - img2) ** 2)
     if mse == 0:
         return float('inf')
-    return 20. * torch.log10(255. / torch.sqrt(mse))
+    return -20. * torch.log10(255. / torch.sqrt(mse))

@@ -42,7 +42,7 @@ class MPI(Dataset):
 device = "cpu"
 
 trainset = MPI(train_imgs, device)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=8, shuffle=False)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=16, shuffle=False)
 
 valset = MPI(test_imgs, device)
-valloader = torch.utils.data.DataLoader(valset, batch_size=8, shuffle=False)
+valloader = torch.utils.data.DataLoader(valset, batch_size=16, shuffle=False)

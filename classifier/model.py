@@ -27,7 +27,7 @@ class classifier_model(nn.Module):
             nn.BatchNorm1d(256),
             nn.Dropout(0.3),
             nn.Linear(256, 128, bias=True),
-            nn.Linear(128, 2)
+            nn.Linear(128, 1)
             
         )
 

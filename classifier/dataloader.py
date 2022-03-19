@@ -38,7 +38,7 @@ class get_data(Dataset):
         self.files = [os.path.join(base, x) for x in f]
         self.ages = [int(x.split("_")[0]) for x in f]
         for i in range(len(f)):
-            vals = torch.zeros(NBINS, dtype=torch.float32)
+            vals = torch.zeros(NBINS, dtype=torch.int32)
             for j in range(BSETS):
                 for k in range(NBINS):
                     if self.ages[i] >= bins[j][k]:
@@ -46,16 +46,16 @@ class get_data(Dataset):
             self.ages[i] = vals.to(device)
 
         self.genders = [
-            torch.tensor(int(x.split("_")[1])).to(device)
+            torch.tensor(int(x.split("_")[1]), dtype=torch.float32).to(device)
             for x in f
         ]
         self.transform = transforms.ToTensor()
 
     def __len__(self):
-        return len(self.f)
+        return len(self.files)
 
     def __getitem__(self, i):
-        img = Image.open(self.files[i])
+        img = Image.open(self.files[i]).resize((512,512))
 
         return self.transform(img).to(device), self.ages[i], self.genders[i]
 

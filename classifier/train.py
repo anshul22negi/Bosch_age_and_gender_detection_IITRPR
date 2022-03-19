@@ -11,11 +11,11 @@ num_buckets = 10
 
 
 model = classifier_model(output_buckets  =output_buckets, num_bucket_sets = num_buckets)
-optimizer = torch.optim.Adam(model.parameters, lr =0.0001)
+optimizer = torch.optim.Adam(model.parameters(), lr =0.0001)
 
 epochs = 10
 
-age_loss = np.inf
+age_loss_best = np.inf
 
 for i in range(epochs):
     for img, age, gender in train_loader:
@@ -26,12 +26,13 @@ for i in range(epochs):
 
         pred_ages, pred_gender = model(img)
         pred_gender = torch.sigmoid(pred_gender)
-
-        train_loss_gender = nn.BCELoss(pred_gender, gender)
+        pred_gender = torch.squeeze(pred_gender, 1)
+        bce_loss = nn.BCELoss()
+        train_loss_gender = bce_loss(pred_gender, gender)
         train_loss_ages = age_loss(age, pred_ages)
 
-        train_loss_gender.backwards()
-        train_loss_ages.backwards()
+        train_loss_gender.backward()
+        train_loss_ages.backward()
 
         optimizer.step()
 
@@ -45,9 +46,9 @@ for i in range(epochs):
             val_loss_gender = nn.BCELoss(pred_gender, gender)
             val_loss_ages = age_loss(age, pred_ages)
 
-    if val_loss_ages < age_loss:
+    if val_loss_ages < age_loss_best:
         torch.save(model, 'models/model.pt')
-        age_loss = val_loss_ages
+        age_loss_best = val_loss_ages
     print(
         f"epoch: {i:3} training age loss: {train_loss_ages:10.8f} ,  validation age loss: {val_loss_ages:10.8f} "
     )

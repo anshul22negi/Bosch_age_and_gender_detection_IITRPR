@@ -20,9 +20,9 @@ model = SwinIR(
     patch_size=(height, width),
     window_size=window_size,
     img_range=1.0,
-    depths=[4, 4,4, 4],
+    depths=[3, 3,3],
     embed_dim=60,
-    num_heads=[4,4,4,4],
+    num_heads=[3,3,3],
     mlp_ratio=2,
     upsampler="pixelshuffledirect",
 )

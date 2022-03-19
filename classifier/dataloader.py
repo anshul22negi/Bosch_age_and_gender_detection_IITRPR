@@ -21,7 +21,7 @@ BATCH_SIZE = 32
 NBINS = 10
 BSETS = 10
 base = os.path.join(dirname(dirname(abspath(__file__))), "dataset", "utkface")
-files = [f for f in os.listdir(base) if isfile(join(base, f))]
+files = [f for f in os.listdir(base) if isfile(os.path.join(base, f))]
 
 random.seed(69)
 split = 0.7
@@ -29,24 +29,24 @@ train_len = int(split * len(files))
 trainfiles = files[:train_len]
 valfiles = files[train_len:]
 
-bins = [[0] + sorted(random.sample(range(117), NBINS - 1)) for _ in range(NSETS)]
+bins = [[0] + sorted(random.sample(range(117), NBINS - 1)) for _ in range(BSETS)]
 device = "cpu"
 
 
 class get_data(Dataset):
     def __init__(self, f):
-        self.files = [join(base, x) for x in f]
+        self.files = [os.path.join(base, x) for x in f]
         self.ages = [int(x.split("_")[0]) for x in f]
         for i in range(len(f)):
-            vals = torch.zeros(NBINs, dtype=torch.float32)
-            for j in range(NSETS):
+            vals = torch.zeros(NBINS, dtype=torch.float32)
+            for j in range(BSETS):
                 for k in range(NBINS):
                     if self.ages[i] >= bins[j][k]:
                         vals[j] = k
             self.ages[i] = vals.to(device)
 
         self.genders = [
-            F.one_hot(torch.tensor(int(x.split("_")[1])), num_classes=2).to(device)
+            torch.tensor(int(x.split("_")[1])).to(device)
             for x in f
         ]
         self.transform = transforms.ToTensor()

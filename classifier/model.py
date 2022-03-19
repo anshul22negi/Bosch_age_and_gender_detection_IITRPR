@@ -27,12 +27,13 @@ class classifier_model(nn.Module):
             nn.BatchNorm1d(256),
             nn.Dropout(0.3),
             nn.Linear(256, 128, bias=True),
-            nn.Linear(128, 2),
-            nn.Softmax(dim=1)
+            nn.Linear(128, 2)
+            
         )
 
     def forward(self, x):
-        x = self.model_ft(x)
+        with torch.no_grad():
+            x = self.model_ft(x)
 
         age = self.pre_age_classifier_layer(x)
         y = torch.zeros((x.shape[0], self.n_sets, self.n_buckets), dtype=x.dtype)
@@ -40,7 +41,7 @@ class classifier_model(nn.Module):
             y[:, i, :] = self.bin_layers[i](age)
         
         gender = self.gender_classifier_layer(x)
-
+         
         return y, gender
 
 

@@ -1,12 +1,13 @@
 import torch
 import torchvision.models as models
+from dataloader import device
 import torch.nn as nn
 
 
 class classifier_model(nn.Module):
     def __init__(self, output_buckets, num_bucket_sets):
         super(classifier_model, self).__init__()
-        self.model_ft = models.vgg16(pretrained=True)
+        self.model_ft = models.vgg16(pretrained=True).to(device)
         self.n_buckets = output_buckets
         self.n_sets = num_bucket_sets
 
@@ -15,10 +16,10 @@ class classifier_model(nn.Module):
             nn.BatchNorm1d(256),
             nn.Dropout(0.2),
             nn.Linear(256, 128, bias=True),
-        )
+        ).to(device)
 
         self.bin_layers = [
-            nn.Sequential(nn.Linear(128, output_buckets, bias=False), nn.LogSoftmax(dim=1))
+            nn.Sequential(nn.Linear(128, output_buckets, bias=False), nn.LogSoftmax(dim=1)).to(device)
             for _ in range(num_bucket_sets)
         ]
 
@@ -28,15 +29,14 @@ class classifier_model(nn.Module):
             nn.Dropout(0.3),
             nn.Linear(256, 128, bias=True),
             nn.Linear(128, 1)
-            
-        )
+        ).to(device)
 
     def forward(self, x):
         with torch.no_grad():
             x = self.model_ft(x)
 
         age = self.pre_age_classifier_layer(x)
-        y = torch.zeros((x.shape[0], self.n_sets, self.n_buckets), dtype=x.dtype)
+        y = torch.zeros((x.shape[0], self.n_sets, self.n_buckets), dtype=x.dtype).to(device)
         for i in range(self.n_sets):
             y[:, i, :] = self.bin_layers[i](age)
         

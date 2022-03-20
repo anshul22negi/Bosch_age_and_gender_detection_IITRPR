@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from dataloader import train_loader, test_loader
+from dataloader import train_loader, test_loader, device
 from model import classifier_model
 from losses import age_loss
 from time import time
@@ -10,7 +10,7 @@ output_buckets = 10
 num_buckets = 10
 
 
-model = classifier_model(output_buckets  =output_buckets, num_bucket_sets = num_buckets)
+model = classifier_model(output_buckets  =output_buckets, num_bucket_sets = num_buckets).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr =0.0001)
 
 epochs = 10
@@ -47,7 +47,7 @@ for i in range(epochs):
             val_loss_ages = age_loss(age, pred_ages)
 
     if val_loss_ages < age_loss_best:
-        torch.save(model, 'models/model.pt')
+        torch.save(model, 'models/agegender.pt')
         age_loss_best = val_loss_ages
     print(
         f"epoch: {i:3} training age loss: {train_loss_ages:10.8f} ,  validation age loss: {val_loss_ages:10.8f} "

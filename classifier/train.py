@@ -43,7 +43,7 @@ for i in range(epochs):
             pred_ages, pred_gender = model(img)
             pred_gender = torch.sigmoid(pred_gender)
 
-            val_loss_gender = nn.BCELoss(pred_gender, gender)
+            val_loss_gender = nn.BCELoss()(pred_gender, gender)
             val_loss_ages = age_loss(age, pred_ages)
 
     if val_loss_ages < age_loss_best:

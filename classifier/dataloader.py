@@ -21,7 +21,7 @@ import pickle as pkl
 import random
 
 
-BATCH_SIZE = 32
+BATCH_SIZE = 128
 NBINS = 10
 BSETS = 10
 base = os.path.join(dirname(dirname(abspath(__file__))), "dataset", "utkface")

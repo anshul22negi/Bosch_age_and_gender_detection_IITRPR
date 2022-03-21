@@ -1,8 +1,8 @@
 import torch
 import torchvision.models as models
-from constants import device
 import torch.nn as nn
 
+device = "cuda"
 
 class classifier_model(nn.Module):
     def __init__(self, output_buckets, num_bucket_sets):
@@ -13,7 +13,7 @@ class classifier_model(nn.Module):
 
         self.pre_age_classifier_layer = nn.Sequential(
             nn.Linear(1000, 256, bias=True),
-            nn.BatchNorm1d(256),
+            # nn.BatchNorm1d(256),
             nn.Dropout(0.2),
             nn.Linear(256, 128, bias=True),
         ).to(device)
@@ -36,28 +36,12 @@ class classifier_model(nn.Module):
 class gender_classifier(nn.Module):
     def __init__(self):
         super(gender_classifier, self).__init__()
-        self.pre_gender_feature_layer = nn.Sequential(
-            nn.Conv2d(3, 64, 3),
-            nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3, stride =3),
-            
-            nn.Conv2d(64, 128, 3),
-            nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3, stride =3),
-            
-            nn.Conv2d(128, 256, 3),
-            nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3, stride =3)
-        ).to(device)
+        self.pre_gender_feature_layer = models.vgg16().to(device)
         
         self.classifier_layer = nn.Sequential(
-            nn.Linear(in_features = 256, out_features = 4096, bias = True),
+            nn.Linear(1000, 256, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
-            nn.Linear(in_features = 4096, out_features = 1000),
-            nn.Linear(1000, 256, bias=True),
-            nn.BatchNorm1d(256),
-            nn.Dropout(0.3),
             nn.Linear(256, 128, bias=True),
             nn.Linear(128, 1),
             nn.Sigmoid()

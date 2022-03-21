@@ -59,6 +59,7 @@
 - In case one does decided to train the model. It is recommended to have atleast 16GB of VRAM for quick and efficient training.
 
 ## Prediction
+- To download all the dependencies, run the command `pip install -r requirements.txt`
 - To just predict the outputs and generate the `output.csv` file, use the `run_video.py` file. Run `python run_video.py -h` for a list
   and description of the arguments required
 - The dataset does not need to be downloaded for prediction

@@ -16,7 +16,7 @@ def preprocess_image(img):
     return transforms.functional.resize(img.to(device), (64, 64)).view((1, 3, 64, 64))
 
 
-age_model_path = Path(__file__).parents[0] / ".." / "models" / "agegender_2.pt"
+age_model_path = Path(__file__).parents[0] / ".." / "models" / "agegender.pt"
 age_model = classifier_model(10, 10)
 age_model.load_state_dict(torch.load(age_model_path))
 age_model.eval()

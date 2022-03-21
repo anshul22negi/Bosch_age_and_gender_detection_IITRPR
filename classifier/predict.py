@@ -31,7 +31,7 @@ def predict_gender_and_age(image_path):
         for i in range(pred_ages.size()[0]):
             for j in range(pred_ages.size()[1]):
                 if j < pred_ages.size()[1]-1:
-                    age_prediction += (bins[i][j] + bins[i+1][j])*pred_ages[i][j]/2
+                    age_prediction += (bins[i][j] + bins[i][j+1])*pred_ages[i][j]/2
                 else:
                     age_prediction += (bins[i][j] + 116)*pred_ages[i][j]/2
         
@@ -39,8 +39,8 @@ def predict_gender_and_age(image_path):
         for i in range(pred_ages.size()[0]):
             for j in range(pred_ages.size()[1]):
                 if j < pred_ages.size()[1]-1:
-                    if age_prediction >= bins[i][j] and age_prediction <= bins[i+1][j] and max_confidence<pred_ages[i][j]:
-                        max_confidence, age_low, age_high = pred_ages[i][j], bins[i][j], bins[i+1][j]
+                    if age_prediction >= bins[i][j] and age_prediction <= bins[i][j+1] and max_confidence<pred_ages[i][j]:
+                        max_confidence, age_low, age_high = pred_ages[i][j], bins[i][j], bins[i][j+1]
                 else:
                     if age_prediction >= bins[i][j] and age_prediction <= 116 and max_confidence<pred_ages[i][j]:
                         max_confidence, age_low, age_high = pred_ages[i][j], bins[i][j], 116

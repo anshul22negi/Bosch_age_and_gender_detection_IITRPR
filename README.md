@@ -63,6 +63,7 @@
 - To just predict the outputs and generate the `output.csv` file, use the `run_video.py` file. Run `python run_video.py -h` for a list
   and description of the arguments required
 - The dataset does not need to be downloaded for prediction
+- 8GB - 16GB of VRAM is recommended for quick predictions.
 
 ## So, What's happening in the background?
 

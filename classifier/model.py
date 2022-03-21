@@ -35,22 +35,23 @@ class classifier_model(nn.Module):
 
 class gender_classifier(nn.Module):
     def __init__(self):
+        super(gender_classifier, self).__init__()
         self.pre_gender_feature_layer = nn.Sequential(
-            nn.Conv2D(3, 64, 3),
+            nn.Conv2d(3, 64, 3),
             nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3),
+            nn.MaxPool2d(kernel_size = 3, stride =3),
             
-            nn.Conv2D(64, 128, 3),
+            nn.Conv2d(64, 128, 3),
             nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3),
+            nn.MaxPool2d(kernel_size = 3, stride =3),
             
-            nn.Conv2D(128, 256, 3),
+            nn.Conv2d(128, 256, 3),
             nn.ReLU(inplace = True),
-            nn.MaxPool2d(kernel_size = 3),
+            nn.MaxPool2d(kernel_size = 3, stride =3)
         ).to(device)
         
         self.classifier_layer = nn.Sequential(
-            nn.Linear(in_features = 25088, out_features = 4096, bias = True),
+            nn.Linear(in_features = 256, out_features = 4096, bias = True),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Linear(in_features = 4096, out_features = 1000),
@@ -58,10 +59,11 @@ class gender_classifier(nn.Module):
             nn.BatchNorm1d(256),
             nn.Dropout(0.3),
             nn.Linear(256, 128, bias=True),
-            nn.Linear(128, 1)           
-        )
+            nn.Linear(128, 1),
+            nn.Sigmoid()
+        ).to(device)
     
     def forward(self, x):
-        x = self.pre_gender_feature_layer(x)
+        x = self.pre_gender_feature_layer(x).view((x.shape[0], -1))
         gender = self.classifier_layer(x)
         return gender

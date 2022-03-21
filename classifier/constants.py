@@ -1,5 +1,6 @@
 import os
 from os.path import dirname, abspath, isfile
+from pathlib import Path
 import random
 
 random.seed(69)
@@ -7,8 +8,8 @@ random.seed(69)
 BATCH_SIZE = 128
 NBINS = 10
 BSETS = 10
-base = os.path.join(dirname(dirname(abspath(__file__))), "dataset", "utkface")
-files = [f for f in os.listdir(base) if isfile(os.path.join(base, f))]
+base = Path(__file__).parents[1] / "dataset" / "utkface"
+files = [f for f in os.listdir(base) if isfile(base / f)]
 
 split = 0.7
 train_len = int(split * len(files))

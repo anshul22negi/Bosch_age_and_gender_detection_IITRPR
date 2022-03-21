@@ -24,14 +24,28 @@ import random
 class get_data(Dataset):
     def __init__(self, f):
         self.transform = transforms.ToTensor()
-        with open(Path(__file__).parents[0] / "face_locations_new.pkl", "rb") as fi:
+        self.resize = transforms.Resize((64, 64))
+        with open(Path(__file__).parents[0] / "face_locations.pkl", "rb") as fi:
             face_map = pkl.load(fi)
 
-        self.files = [os.path.join(base, x) for x in f if x in face_map]
+        files = [Path(base) / x for x in f if x in face_map]
         self.faces = [face_map[x] for x in f if x in face_map]
 
-        self.ages = [int(x.split("_")[0]) for x in f]
-        for i in range(len(f)):
+        self.images = [
+            self.resize(
+                transforms.functional.crop(
+                    self.transform(Image.open(files[i])),
+                    self.faces[i][0],
+                    self.faces[i][3],
+                    self.faces[i][2] - self.faces[i][0],
+                    self.faces[i][1] - self.faces[i][3],
+                )
+            ).to(device)
+            for i in range(len(files))
+        ]
+
+        self.ages = [int(x.name.split("_")[0]) for x in files]
+        for i in range(len(files)):
             vals = torch.zeros(NBINS, dtype=torch.int32)
             for j in range(BSETS):
                 for k in range(NBINS):
@@ -43,16 +57,12 @@ class get_data(Dataset):
             torch.tensor(int(x.split("_")[1]), dtype=torch.float32).to(device)
             for x in f
         ]
-        self.resize = transforms.Resize((64,64))
 
     def __len__(self):
-        return len(self.files)
+        return len(self.images)
 
     def __getitem__(self, i):
-        img = self.transform(Image.open(self.files[i]))
-        img = self.resize(transforms.functional.crop(img, self.faces[i][0], self.faces[i][3],self.faces[i][2] - self.faces[i][0],self.faces[i][1] - self.faces[i][3]))
-
-        return img.to(device), self.ages[i], self.genders[i]
+        return self.images[i], self.ages[i], self.genders[i]
 
 
 train_loader = DataLoader(get_data(trainfiles), batch_size=BATCH_SIZE, shuffle=True)

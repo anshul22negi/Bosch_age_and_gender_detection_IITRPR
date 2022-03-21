@@ -44,9 +44,43 @@ class classifier_model(nn.Module):
          
         return y, gender
 
+class age_classifier(nn.Module):
+    def __init__(self):
+        self.pre_age_feature_layer = nn.Sequential(
+            nn.Conv2D(3, 64, 3),
+            nn.ReLU(inplace = True),
+            nn.MaxPool2d(kernel_size = 3),
+            
+            nn.Conv2D(64, 128, 3),
+            nn.ReLU(inplace = True),
+            nn.MaxPool2d(kernel_size = 3),
+            
+            nn.Conv2D(128, 256, 3),
+            nn.ReLU(inplace = True),
+            nn.MaxPool2d(kernel_size = 3),
+        ).to(device)
+        
+        self.classifier_layer = nn.Sequential(
+            nn.Linear(in_features = 25088, out_features = 4096, bias = True),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(in_features = 4096, out_features = 1000),
+            nn.Linear(1000, 256, bias=True),
+            nn.BatchNorm1d(256),
+            nn.Dropout(0.3),
+            nn.Linear(256, 128, bias=True),
+            nn.Linear(128, 1)           
+        )
+    
+    def forward(self, x):
+        x = self.pre_age_feature_layer(x)
+        gender = self.classifier_layer(x)
+        return gender
+     
+
 
 if __name__ == "__main__":
-    model = classifier_model(5)
+    model = classifier_model(10, 10)
     x = torch.randn((32, 3, 256, 256))
     x, y = model(x)
-    print(x.shape)
+    print(model)

@@ -5,7 +5,7 @@ from PIL import Image
 from pathlib import Path
 import argparse
 
-model = torch.load(Path(__file__).parents[0] / "models" / "model_2.pt").cpu()
+model = torch.load(Path(__file__).parents[0] / "models" / "model_2.pt", map_location=torch.device('cpu')).cpu()
 
 # expects (C, H, W) tensor
 def upscale(img):

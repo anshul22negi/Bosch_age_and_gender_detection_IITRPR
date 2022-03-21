@@ -1,5 +1,4 @@
 import numpy as np  # linear algebra
-import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
 import os
 from os.path import dirname, abspath, isfile
 from pathlib import Path
@@ -16,31 +15,16 @@ import torchvision
 from torchvision import transforms
 
 from face_detection import get_faces
+from constants import *
 
 import pickle as pkl
 import random
 
 
-BATCH_SIZE = 128
-NBINS = 10
-BSETS = 10
-base = os.path.join(dirname(dirname(abspath(__file__))), "dataset", "utkface")
-files = [f for f in os.listdir(base) if isfile(os.path.join(base, f))]
-
-random.seed(69)
-split = 0.7
-train_len = int(split * len(files))
-trainfiles = files[:train_len]
-valfiles = files[train_len:]
-
-bins = [[0] + sorted(random.sample(range(117), NBINS - 1)) for _ in range(BSETS)]
-device = "cpu"
-
-
 class get_data(Dataset):
     def __init__(self, f):
         self.transform = transforms.ToTensor()
-        with open(Path(__file__).parents[0] / "face_locations.pkl", "rb") as fi:
+        with open(Path(__file__).parents[0] / "face_locations_new.pkl", "rb") as fi:
             face_map = pkl.load(fi)
 
         self.files = [os.path.join(base, x) for x in f if x in face_map]
@@ -66,7 +50,7 @@ class get_data(Dataset):
 
     def __getitem__(self, i):
         img = self.transform(Image.open(self.files[i]))
-        img = self.resize(transforms.functional.crop(img, self.faces[i][0], self.faces[i][1],self.faces[i][2],self.faces[i][3]))
+        img = self.resize(transforms.functional.crop(img, self.faces[i][0], self.faces[i][3],self.faces[i][2] - self.faces[i][0],self.faces[i][1] - self.faces[i][3]))
 
         return img.to(device), self.ages[i], self.genders[i]
 

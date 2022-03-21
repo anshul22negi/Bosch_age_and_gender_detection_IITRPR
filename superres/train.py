@@ -3,6 +3,7 @@ import torch.nn as nn
 from dataloader import trainloader, valloader
 from swin_ir import SwinIR
 from utils.psnr import calculate_psnr
+from pathlib import Path
 from time import time
 import numpy as np
 
@@ -21,9 +22,9 @@ model = SwinIR(
     patch_size=(height, width),
     window_size=window_size,
     img_range=1.0,
-    depths=[3,3,3],
+    depths=[3, 3, 3],
     embed_dim=60,
-    num_heads=[3,3,3],
+    num_heads=[3, 3, 3],
     mlp_ratio=2,
     upsampler="pixelshuffledirect",
 )
@@ -59,10 +60,8 @@ for i in range(epochs):
             val_loss = single_loss.item()
 
     if val_loss < bvloss:
-        torch.save(model, 'models/model.pt')
+        torch.save(model, Path(__file__) / ".." / "models" / "model.pt")
         bvloss = val_loss
     print(
         f"epoch: {i:3} training loss: {train_loss:10.8f} ,  validation loss: {val_loss:10.8f} "
     )
-    
-

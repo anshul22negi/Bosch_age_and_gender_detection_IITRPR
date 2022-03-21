@@ -1,6 +1,6 @@
 import torch
 import torchvision.models as models
-from dataloader import device
+from constants import device
 import torch.nn as nn
 
 
@@ -19,17 +19,9 @@ class classifier_model(nn.Module):
         ).to(device)
 
         self.bin_layers = [
-            nn.Sequential(nn.Linear(128, output_buckets, bias=False), nn.LogSoftmax(dim=1)).to(device)
+            nn.Sequential(nn.Linear(128, output_buckets, bias=False), nn.Softmax(dim=1)).to(device)
             for _ in range(num_bucket_sets)
         ]
-
-        self.gender_classifier_layer = nn.Sequential(
-            nn.Linear(1000, 256, bias=True),
-            nn.BatchNorm1d(256),
-            nn.Dropout(0.3),
-            nn.Linear(256, 128, bias=True),
-            nn.Linear(128, 1)
-        ).to(device)
 
     def forward(self, x):
         with torch.no_grad():
@@ -39,14 +31,11 @@ class classifier_model(nn.Module):
         y = torch.zeros((x.shape[0], self.n_sets, self.n_buckets), dtype=x.dtype).to(device)
         for i in range(self.n_sets):
             y[:, i, :] = self.bin_layers[i](age)
-        
-        gender = self.gender_classifier_layer(x)
-         
-        return y, gender
+        return y
 
-class age_classifier(nn.Module):
+class gender_classifier(nn.Module):
     def __init__(self):
-        self.pre_age_feature_layer = nn.Sequential(
+        self.pre_gender_feature_layer = nn.Sequential(
             nn.Conv2D(3, 64, 3),
             nn.ReLU(inplace = True),
             nn.MaxPool2d(kernel_size = 3),
@@ -73,14 +62,6 @@ class age_classifier(nn.Module):
         )
     
     def forward(self, x):
-        x = self.pre_age_feature_layer(x)
+        x = self.pre_gender_feature_layer(x)
         gender = self.classifier_layer(x)
         return gender
-     
-
-
-if __name__ == "__main__":
-    model = classifier_model(10, 10)
-    x = torch.randn((32, 3, 256, 256))
-    x, y = model(x)
-    print(model)

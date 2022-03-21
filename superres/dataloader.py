@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
 import random
 
-path = Path(__file__).parents[0] / "dataset" / "mpii_human_pose_v1" / "images"
+path = Path(__file__).parents[0] / ".." / "dataset" / "mpii_human_pose_v1" / "images"
 files = sorted([join(path, f) for f in listdir(path) if isfile(join(path, f))])
 
 random.seed(69)

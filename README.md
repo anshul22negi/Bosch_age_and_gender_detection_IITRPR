@@ -1,4 +1,4 @@
-# ✨Bosch Age and Gender detection ✨
+# Bosch Age and Gender detection
 
 ## IIT Ropar's Submission for the Bosch age and gender detection task as a part of the Inter IIT Tech Meet 2022
 
@@ -13,11 +13,13 @@
 - ####  Swin Transformer for Image Super Resolution of low quality video
     - MPII Human Pose Dataset used for training 
         > http://human-pose.mpi-inf.mpg.de/   
+      - Extract to the `dataset` directory. All images should be accessible at `dataset/mpii_human_pose_v1/images`
 
     - SwinIR implementation taken from the official implementation as described in the 2021 paper.
          > Paper Link : 
           https://openaccess.thecvf.com/content/ICCV2021W/AIM/html/Liang_SwinIR_Image_Restoration_Using_Swin_Transformer_ICCVW_2021_paper.html
-          Official Implementation : https://github.com/JingyunLiang/SwinIR
+
+         > Official Implementation : https://github.com/JingyunLiang/SwinIR
 
 - ####  Face Recognition Library for Face extraction and bounding box prediction
     - Library used :
@@ -26,6 +28,8 @@
 - ####  Vgg16 based model for age and gender prediction with deep ordinal regression to optimise grouping of bins for the age prediction task
     - Dataset used - UTK face
        > https://susanqq.github.io/UTKFace/
+       - Download the three parts and name them `utkface_1.tar.gz`, `utkface_2.tar.gz`, `utkface_3.tar.gz` in the root directory
+       - Run `./utkface.sh` to extract and process the dataset
     - Model used  
       >https://github.com/pytorch/vision/blob/main/torchvision/models/vgg.py 
 
@@ -35,31 +39,28 @@
 ## Training
 
 #### Image Super-Resolution
-- To train the Transformer for image super-resolution, run the train.py file located in the root directory. 
-- The model has been implemented in the swin_ir.py and the dataloader for the same has been implemented in dataloader.py in the root directory. The model parameters and the data generators can be changed here.
-- predict_sr.py can be used to test image super resolution on individual files.
+- To train the Transformer for image super-resolution, run the `train.py` file located in the root directory. 
+- The model has been implemented in the `swin_ir.py` and the dataloader for the same has been implemented in `dataloader.py` in the root directory. The model parameters and the data generators can be changed here.
+- `predict_sr.py` can be used to test image super resolution on individual files.
 - Output is 2x the resolution of original image.
 
 #### Face detection
-- face_detection.py generates the bounding boxes in the top left bottom right CSS format
+- `face_detection.py` generates the bounding boxes in the top left bottom right CSS format
 
 #### Gender Detection
-
+- `classifier/train_gender.py` trains the gender model
 
 #### Age Detection
+- `classifier/train_age.py` trains the age model
 
 ###### Note :
 - Training the models is an optional step as models trained by us have already been saved and provided along with the rest of the files. 
 - In case one does decided to train the model. It is recommended to have atleast 16GB of VRAM for quick and efficient training.
 
 ## Prediction
-- To just predict the outputs and generate the output.csv file, run the following command in the root directory
-         > 
-- Here,
-
-
-
-
+- To just predict the outputs and generate the `output.csv` file, use the `run_video.py` file. Run `python run_video.py -h` for a list
+  and description of the arguments required
+- The dataset does not need to be downloaded for prediction
 
 ## So, What's happening in the background?
 

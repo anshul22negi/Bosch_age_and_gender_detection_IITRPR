@@ -57,6 +57,7 @@
 ###### Note :
 - Training the models is an optional step as models trained by us have already been saved and provided along with the rest of the files. 
 - In case one does decided to train the model. It is recommended to have atleast 16GB of VRAM for quick and efficient training.
+- Please download the latest version of pytorch as per your machine configuration from `https://pytorch.org/`
 
 ## Prediction
 - To download all the dependencies, run the command `pip install -r requirements.txt`

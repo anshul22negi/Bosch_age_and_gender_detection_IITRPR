@@ -38,6 +38,7 @@
 
 ## Training
 
+- To download all the dependencies, run the command `pip install -r requirements.txt`
 #### Image Super-Resolution
 - To train the Transformer for image super-resolution, run the `train.py` file located in the root directory. 
 - The model has been implemented in the `swin_ir.py` and the dataloader for the same has been implemented in `dataloader.py` in the root directory. The model parameters and the data generators can be changed here.

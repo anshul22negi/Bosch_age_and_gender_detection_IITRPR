@@ -34,7 +34,7 @@ trainfiles = files[:train_len]
 valfiles = files[train_len:]
 
 bins = [[0] + sorted(random.sample(range(117), NBINS - 1)) for _ in range(BSETS)]
-device = "cuda"
+device = "cpu"
 
 
 class get_data(Dataset):

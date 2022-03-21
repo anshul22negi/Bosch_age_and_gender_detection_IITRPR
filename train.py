@@ -64,3 +64,5 @@ for i in range(epochs):
     print(
         f"epoch: {i:3} training loss: {train_loss:10.8f} ,  validation loss: {val_loss:10.8f} "
     )
+    
+

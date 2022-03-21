@@ -3,4 +3,4 @@ import torch
 
 
 def get_faces(img):
-    return fr.face_locations(img.permute(1, 2, 0).numpy())
+    return fr.face_locations((img.permute(1, 2, 0) * 255).to(torch.uint8).numpy())
